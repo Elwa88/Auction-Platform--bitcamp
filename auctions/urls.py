@@ -7,4 +7,5 @@ urlpatterns = [
     path('auction_list/',AuctionList.as_view()),
     path('bid/',BidCreate.as_view()),
     path('bid_list/',BidList.as_view()),
+    path('find_winner/<int:pk>/',AuctionWinner.as_view())
 ]
