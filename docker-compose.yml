@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgres/data
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+  
+  web:
+    build: .
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      gunicorn AuctionPlatform.wsgi:application --bind 0.0.0.0:8000
+      "
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY : ${SECRET_KEY}
+      DEBUG : ${DEBUG}
+      DB_NAME : ${DATABASE_NAME}
+      DB_USER : ${DATABASE_USER}
+      DB_PASSWORD : ${DATABASE_PASSWORD}
+      DB_HOST : ${DATABASE_HOST}
+      DB_PORT : ${DATABASE_PORT}
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
