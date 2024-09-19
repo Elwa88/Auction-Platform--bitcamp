@@ -46,10 +46,9 @@ class AuctionWinner(generics.RetrieveAPIView):
             email = EmailMessage(
                 subject='Won Auction',
                 body=f'Congratulations you won the auction on {auction.product}. You owe us {auction.current_bid}. Pay now pretty please :)',
-                from_email="abashidze8goga@gmail.com",
                 to = [highest_bid.bidder.email],
             )
-            email.send(fail_silently=False)
+            #email.send(fail_silently=False)
             auction.delete()
 
             return Response({"message" : "E-mail sent to the winner, auction has been removed"})

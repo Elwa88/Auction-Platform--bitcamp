@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
-
+from django.utils import timezone
+from datetime import timedelta
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -25,6 +26,9 @@ class BidSerializer(serializers.ModelSerializer):
     def validate(self,data):
         auction = data['auction']
 
+        if timezone.now() > auction.end_date:
+            raise serializers.ValidationError("Auction has already ended!")
+        
         if data['bid'] - auction.current_bid < auction.min_bid:
             raise serializers.ValidationError(f"Minimum increment amount is {auction.min_bid}! current bid is {auction.current_bid}.")
         
@@ -33,7 +37,13 @@ class BidSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         
         bid = Bid.objects.create(**validated_data)
-        validated_data['auction'].current_bid = bid.bid 
-        validated_data['auction'].save()
+        auction = validated_data['auction']
+        time_left = int((auction.end_date - timezone.now()).total_seconds())
+
+        if time_left < 60:
+            auction.end_date += timedelta(seconds=(60-time_left))
+
+        auction.current_bid = bid.bid 
+        auction.save()
 
         return bid
