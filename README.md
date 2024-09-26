@@ -25,7 +25,7 @@ The Auction Platform API allows administrators to add products and start auction
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/auction-platform-api.git
+   git clone https://github.com/Elwa88/Auction-Platform--bitcamp.git
    cd auction-platform-api
 2. Build the Docker image:
    ```bash
